@@ -44,7 +44,7 @@ int main(int argc, char **argv)
   else if (pid1 == 0) { // child
     //printf("in child 1, pid: %d %d %d\n", pid1, pid2, pid3);
     sleep(1);
-    execlp ("./task", "task", "1", NULL);
+    execlp ("./task", "task", "3", NULL);
   }
   else {
     pid2 = fork();
@@ -60,14 +60,14 @@ int main(int argc, char **argv)
       if (pid3 == 0) {  // child
         //printf("in child 3, pid: %d %d %d\n", pid1, pid2, pid3);
         sleep(3);
-        execlp ("./task", "task", "3", NULL);
+        execlp ("./task", "task", "1", NULL);
       }
       else {
         //printf("in parent inside pid: %d %d %d\n", pid1, pid2, pid3);
 	wait(&status);
-	wait(&status);
-	wait(&status);
 	execlp ("./task", "task", "4", NULL);
+	wait(&status);
+	wait(&status);
       }
     }
   }
