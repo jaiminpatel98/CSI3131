@@ -42,7 +42,7 @@ int main(int argc, char **argv)
   pid1 = fork();
   if (pid1 < 0) fprintf(stderr, "Fork Failed");
   else if (pid1 == 0) { // child
-    printf("in child 1, pid: %d %d %d\n", pid1, pid2, pid3);
+    //printf("in child 1, pid: %d %d %d\n", pid1, pid2, pid3);
     sleep(1);
     execlp ("./task", "task", "3", NULL);
   }
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     pid2 = fork();
     if (pid2 < 0) fprintf(stderr, "Fork Failed");
     if (pid2 == 0) { // child
-      printf("in child 2, pid: %d %d %d\n", pid1, pid2, pid3);
+      ///printf("in child 2, pid: %d %d %d\n", pid1, pid2, pid3);
       sleep(2);
       execlp ("./task", "task", "2", NULL);
     }
@@ -58,12 +58,12 @@ int main(int argc, char **argv)
       pid3 = fork();
       if (pid3 < 0) fprintf(stderr, "Fork Failed");
       if (pid3 == 0) {  // child
-        printf("in child 3, pid: %d %d %d\n", pid1, pid2, pid3);
+        //printf("in child 3, pid: %d %d %d\n", pid1, pid2, pid3);
         sleep(3);
         execlp ("./task", "task", "1", NULL);
       }
       else {
-        printf("in parent inside pid: %d %d %d\n", pid1, pid2, pid3);
+        //printf("in parent inside pid: %d %d %d\n", pid1, pid2, pid3);
         wait(&status);
         wait(&status);
         wait(&status);
