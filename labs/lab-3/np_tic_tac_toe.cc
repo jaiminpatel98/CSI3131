@@ -27,7 +27,8 @@
  
 int main(int argc, char **argv) {
   char player;
-  
+  char* my_pipe = "my_pipe";
+  mkfifo (my_pipe, 0666);
 
   if (argc != 2) {
     printf ("Usage: sig_tic_tac_toe [X|O] \n");
