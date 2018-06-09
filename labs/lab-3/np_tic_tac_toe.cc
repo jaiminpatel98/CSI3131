@@ -46,10 +46,11 @@ int main(int argc, char **argv) {
   int turn = 0;
   int pipe[2];
   my_pipe(pipe);
-
+  int file;
+  
   do {
     if (turn%2 == 0) {
-      int file;
+      
       if(turn == 0) {
         game->display_game_board();
         game->get_player_move();
