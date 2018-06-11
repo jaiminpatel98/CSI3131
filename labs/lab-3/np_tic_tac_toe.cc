@@ -26,7 +26,7 @@
  
 int main(int argc, char **argv) {
   char player;
-
+  
   if (argc != 2) {
     printf ("Usage: sig_tic_tac_toe [X|O] \n");
     return (-1);
@@ -39,9 +39,8 @@ int main(int argc, char **argv) {
   
   char my_fifo[128] = "my_pipe";
   tic_tac_toe *game = new tic_tac_toe();
-  char* state = game->convert2string();
+  char* state;
   char str[128];
-  game->set_game_state(state);
   int turn = 0;
   int file;
   //mkfifo(my_fifo, 0666);
@@ -67,7 +66,7 @@ int main(int argc, char **argv) {
       game->display_game_board();
       turn++;
     }
-  } while ((player = game->game_result()) == '-');
+  } while ((game->game_result()) == '-');
   printf ("Game finished, result: %c \n", player);
   return (0);
 }
