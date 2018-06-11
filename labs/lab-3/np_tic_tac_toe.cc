@@ -26,8 +26,6 @@
  
 int main(int argc, char **argv) {
   char player;
-  char* my_pipe = "my_pipe";
-  mkfifo (my_pipe, 0666);
 
   if (argc != 2) {
     printf ("Usage: sig_tic_tac_toe [X|O] \n");
@@ -39,13 +37,14 @@ int main(int argc, char **argv) {
     return (-2);
   }
   
-  char* my_fifo = "my_pipe";
+  char my_fifo[128] = "my_pipe";
   tic_tac_toe *game = new tic_tac_toe();
   char* state = game->convert2string();
+  char str[128];
   game->set_game_state(state);
   int turn = 0;
   int file;
-  mkfifo(my_fifo, 0666);
+  //mkfifo(my_fifo, 0666);
 
   if (player == 'O') {
     turn = 1;
@@ -54,15 +53,15 @@ int main(int argc, char **argv) {
   do {
     if (turn & 1) {
       file = open(my_fifo, O_RDONLY);
-      read(file, state, strlen(state) + 1);
+      read(file, str, 128);
       close(file);
-      game->set_game_state(state);
+      game->set_game_state(str);
       game->display_game_board();
-      turn++;
+      turn++;  
     } else {
-      file = open(my_fifo, O_WRONLY);
       game->get_player_move(player);
       state = game->convert2string();
+      file = open(my_fifo, O_WRONLY);
       write(file, state, strlen(state) + 1);
       close(file);
       game->display_game_board();
