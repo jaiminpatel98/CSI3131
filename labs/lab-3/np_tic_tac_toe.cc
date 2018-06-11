@@ -45,6 +45,7 @@ int main(int argc, char **argv) {
   char* state = game->convert2string();
   game->set_game_state(state);
   int turn = 0;
+<<<<<<< HEAD
   int file;
   mkfifo(my_fifo, 0666)
 
@@ -56,6 +57,41 @@ int main(int argc, char **argv) {
     if (turn & 1) {
       file = open(my_fifo, O_RDONLY);
       read(file, state, length(state) + 1);
+=======
+  int pipe[2];
+  my_pipe(pipe);
+  int file;
+  
+  do {
+    if (turn%2 == 0) {
+      
+      if(turn == 0) {
+        game->display_game_board();
+        game->get_player_move();
+        game->display_game_board();
+        turn++;
+        state = game->convert2string();
+        file = open(my_pipe, O_WRONLY);
+        write(file, state, strlen(state)+1);
+        close(file);
+      } else {
+        file = open(my_pipe, O_RDONLY);
+        read(file, state, strlen(state)+1);
+        close();
+        game->set_game_state(state);
+        game->display_game_board();
+        game->get_player_move();
+        game->display_game_board();
+        turn++;
+        state = game->convert2string();
+        file = open(my_pipe, O_WRONLY);
+        write(file, state, strlen(state)+1);
+        close(file);
+      }
+    } else {
+      file = open(my_pipe, O_RDONLY);
+      read(file, state, strlen(state)+1);
+>>>>>>> 1adeadfe654b7ed6dfd04d2473a59ec8db18de5b
       close(file);
       game->set_game_state(state);
       game->display_game_board();
