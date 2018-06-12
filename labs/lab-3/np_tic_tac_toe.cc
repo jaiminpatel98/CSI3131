@@ -4,6 +4,7 @@
 #include <signal.h> // sigaction(), sigsuspend(), sig*()
 #include <unistd.h> // alarm()
 #include <string.h>
+#include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -25,7 +26,7 @@
  
 int main(int argc, char **argv) {
   char player;
-
+  
   if (argc != 2) {
     printf ("Usage: sig_tic_tac_toe [X|O] \n");
     return (-1);
@@ -37,8 +38,16 @@ int main(int argc, char **argv) {
   }
 
   int file;
-
   char str[128];
+  char my_fifo[128] = "my_pipe";
+  tic_tac_toe *game = new tic_tac_toe();
+  char* state;
+  int turn = 0;
+
+  if (player == 'O') {
+    turn = 0;
+  }
+
   do {
     if (turn & 1) {
       file = open(my_fifo, O_RDONLY);
