@@ -122,6 +122,45 @@ int main(int argc, char **argv) {
       perror("Error: cannot handle SIGINT"); // Should not happen
   }
 
+  static bool globalFlag = false;
+  tic_tac_toe *game = new tic_tac_toe();
+  char str[128];
+  char *state = game->convert2string();
+  outFile = fopen(my_filename, "w");
+  fprintf(outFile, "%s", state);
+  fclose(outFile);
+  int turn = 0;  
+
+  if (player == 'O') {
+    turn = 1;
+  }
+
+  do {
+    if (turn & 1) {
+      while (globalFlag == false) {
+        sleep(1);
+      }
+      inFile = fopen(oponent_filename, "r");
+      fgets(str, 128, inFile);
+      fclose(inFile);
+      game->set_game_state(str);
+      game->display_game_board();
+      turn++;
+    } else {
+      game->get_player_move(player);
+      state = game->convert2string();
+      outFile = fopen(my_filename, "w");
+      fprintf(outFile, "%s", state);
+      fclose(outFile);
+      game->display_game_board();
+      turn++;
+      globalFlag = true;
+    }
+  } while (game->game_result() == '-');
+  char gameResult = game->game_result();
+  printf ("Game finished, result: %c \n", gameResult);
+  return (0);
+
   // for (;;) {
       // printf("\nSleeping for ~3 seconds\n");
       // sleep(3); // Later to be replaced with a SIGALRM
