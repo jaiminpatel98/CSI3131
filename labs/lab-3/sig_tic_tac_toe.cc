@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
   oponent_pid = atoi (buffer1);
   printf (" done. \noponent_pid %d \n", oponent_pid);
   fclose(inFile);
-  remove(inFile);
+  remove(oponent_filename);
 
   // Setup the sighub handler
   sa.sa_handler = &handle_signal;
