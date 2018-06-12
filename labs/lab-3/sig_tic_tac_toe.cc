@@ -89,8 +89,8 @@ int main(int argc, char **argv) {
   
   printf ("trying to open input file:\n .");
   do {
-    sleep(1);
-    inFile = fopen (oponent_filename, "r");
+    sleep(5);
+    inFile = fopen(oponent_filename, "r");
     printf (".");
   } while (inFile == NULL);
   
@@ -98,6 +98,7 @@ int main(int argc, char **argv) {
   oponent_pid = atoi (buffer1);
   printf (" done. \noponent_pid %d \n", oponent_pid);
   fclose(inFile);
+  remove(inFile);
 
   // Setup the sighub handler
   sa.sa_handler = &handle_signal;
@@ -147,6 +148,7 @@ int main(int argc, char **argv) {
       game->set_game_state(str);
       game->display_game_board();
       turn++;
+      remove(oponent_filename);
       signal(SIGUSR1, handle_signal);
     } else {
       game->get_player_move(player);
@@ -161,8 +163,6 @@ int main(int argc, char **argv) {
   } while (game->game_result() == '-');
   char gameResult = game->game_result();
   printf ("Game finished, result: %c \n", gameResult);
-  return (0);
-
   // for (;;) {
       // printf("\nSleeping for ~3 seconds\n");
       // sleep(3); // Later to be replaced with a SIGALRM
@@ -170,6 +170,7 @@ int main(int argc, char **argv) {
 
   remove (oponent_filename);  // need to remove file for next time we run the game
   signal(SIGINT, handle_signal);
+  return(0);
 }
 
 void handle_signal(int signal) {
