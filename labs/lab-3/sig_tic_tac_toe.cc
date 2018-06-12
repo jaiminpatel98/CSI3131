@@ -33,6 +33,7 @@
 void handle_signal(int signal);
 void handle_sigalrm(int signal);
 void do_sleep(int seconds);
+bool opponent_done = false;
 
 /* Usage example
  * 
@@ -122,7 +123,7 @@ int main(int argc, char **argv) {
       perror("Error: cannot handle SIGINT"); // Should not happen
   }
 
-  static bool globalFlag = false;
+  
   tic_tac_toe *game = new tic_tac_toe();
   char str[128];
   char *state = game->convert2string();
@@ -137,7 +138,7 @@ int main(int argc, char **argv) {
 
   do {
     if (turn & 1) {
-      while (globalFlag == false) {
+      while (opponent_done == false) {
         sleep(1);
       }
       inFile = fopen(oponent_filename, "r");
@@ -146,6 +147,7 @@ int main(int argc, char **argv) {
       game->set_game_state(str);
       game->display_game_board();
       turn++;
+      signal(SIGUSR1, handle_signal);
     } else {
       game->get_player_move(player);
       state = game->convert2string();
@@ -154,7 +156,7 @@ int main(int argc, char **argv) {
       fclose(outFile);
       game->display_game_board();
       turn++;
-      globalFlag = true;
+      signal(SIGUSR1, handle_signal);
     }
   } while (game->game_result() == '-');
   char gameResult = game->game_result();
@@ -167,13 +169,18 @@ int main(int argc, char **argv) {
   // }
 
   remove (oponent_filename);  // need to remove file for next time we run the game
+  signal(SIGINT, handle_signal);
 }
 
 void handle_signal(int signal) {
   sigset_t pending;
 
   if (signal == SIGUSR1){
-    printf ("received SIGUSR1 signal \n");
+    if (opponent_done) {
+      opponent_done = false;
+    } else {
+      opponent_done = true;
+    }
   }
   else if (signal == SIGINT) exit(0); // CTRL C exit
   else return;
