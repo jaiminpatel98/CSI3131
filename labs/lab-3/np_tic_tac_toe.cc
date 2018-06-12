@@ -43,10 +43,12 @@ int main(int argc, char **argv) {
   char my_fifo[128] = "my_pipe";
   tic_tac_toe *game = new tic_tac_toe();
   char* state;
+  state = game->convert2string();
+  game->set_game_state(state);
   int turn = 0;
 
   if (player == 'O') {
-    turn = 0;
+    turn = 1;
   }
 
   do {
@@ -66,8 +68,9 @@ int main(int argc, char **argv) {
       game->display_game_board();
       turn++;
     }
-  } while ((game->game_result()) == '-');
-  printf ("Game finished, result: %c \n", player);
+  } while (game->game_result() == '-');
+  char win = game->game_result();
+  printf ("Game finished, result: %c \n", win);
   return (0);
 
 }
