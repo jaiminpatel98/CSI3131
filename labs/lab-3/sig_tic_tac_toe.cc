@@ -33,7 +33,6 @@
 void handle_signal(int signal);
 void handle_sigalrm(int signal);
 void do_sleep(int seconds);
-bool opponent_done = false;
 
 /* Usage example
  * 
@@ -83,22 +82,21 @@ int main(int argc, char **argv) {
   my_pid = getpid();
   printf("My pid is: %d\n", my_pid);
   
-  outFile = fopen (my_filename, "w");
+  outFile = fopen (oponent_filename, "w");
   fprintf (outFile, "%d", my_pid);
   fclose(outFile);
   
   printf ("trying to open input file:\n .");
   do {
     sleep(5);
-    inFile = fopen(oponent_filename, "r");
+    inFile = fopen(my_filename, "r");
     printf (".");
   } while (inFile == NULL);
   
   fgets( buffer1, 128, inFile );
   oponent_pid = atoi (buffer1);
   printf (" done. \noponent_pid %d \n", oponent_pid);
-  fclose(inFile);
-  remove(oponent_filename);
+  fclose(inFile);  
 
   // Setup the sighub handler
   sa.sa_handler = &handle_signal;
@@ -127,40 +125,37 @@ int main(int argc, char **argv) {
   
   tic_tac_toe *game = new tic_tac_toe();
   char str[128];
-  char *state = game->convert2string();
-  outFile = fopen(my_filename, "w");
-  fprintf(outFile, "%s", state);
-  fclose(outFile);
+  char *state;
   int turn = 0;  
-
+  
   if (player == 'O') {
     turn = 1;
   }
 
   do {
     if (turn & 1) {
-      while (opponent_done == false) {
+      do {
         sleep(1);
-      }
-      inFile = fopen(oponent_filename, "r");
+        inFile = fopen(oponent_filename, "r");
+        printf("%c", '.');
+      } while (inFile == NULL);
       fgets(str, 128, inFile);
       fclose(inFile);
       game->set_game_state(str);
-      game->display_game_board();
       turn++;
       remove(oponent_filename);
       signal(SIGUSR1, handle_signal);
     } else {
+      game->display_game_board();
       game->get_player_move(player);
       state = game->convert2string();
       outFile = fopen(my_filename, "w");
-      fprintf(outFile, "%s", state);
+      fprintf(outFile, "%s\n", state);
       fclose(outFile);
-      game->display_game_board();
       turn++;
       signal(SIGUSR1, handle_signal);
     }
-  } while (game->game_result() == '-');
+  } while ('X' != game->game_result() && 'O' != game->game_result() && 'd' != game->game_result());
   char gameResult = game->game_result();
   printf ("Game finished, result: %c \n", gameResult);
   // for (;;) {
@@ -177,11 +172,7 @@ void handle_signal(int signal) {
   sigset_t pending;
 
   if (signal == SIGUSR1){
-    if (opponent_done) {
-      opponent_done = false;
-    } else {
-      opponent_done = true;
-    }
+    printf("SIGUSR1 handled...");
   }
   else if (signal == SIGINT) exit(0); // CTRL C exit
   else return;
